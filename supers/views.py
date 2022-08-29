@@ -1,11 +1,15 @@
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from .serializers import SupersSerializer
+from .models import Supers
+from supers import serializers
 
-# Create your views here.
-
-@api_view()
+@api_view(['GET'])
 def supers_list(request):
-    pass
+    supers = Supers.objects.all()
+    serializer = SupersSerializer(supers, many=True)
+    return Response(serializer.data)
 
 @api_view()
-def supers_detail():
-    pass
+def supers_detail(request):
+    return Response('ok')
