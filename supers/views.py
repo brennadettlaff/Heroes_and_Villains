@@ -1,8 +1,10 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import SupersSerializer
 from .models import Supers
+from supers import serializers
 
 
 @api_view(['GET', 'POST'])
@@ -17,6 +19,8 @@ def supers_list(request):
         serializer.save()
         return Response(serializer.data,status=status.HTTP_201_CREATED)
 
-@api_view()
-def supers_detail(request):
-    return Response('ok')
+@api_view(['GET'])
+def supers_detail(request, pk):
+    product = get_object_or_404(Supers, pk=pk)
+    serializer = SupersSerializer(product)
+    return Response(serializer.data)
