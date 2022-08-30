@@ -10,7 +10,10 @@ from supers import serializers
 @api_view(['GET', 'POST'])
 def supers_list(request):
     if request.method == 'GET':
+        type_name = request.query_params.get('type')
         supers = Supers.objects.all()
+        if type_name:
+            supers = supers.filter(super_type__type=type_name)
         serializer = SupersSerializer(supers, many=True)
         return Response(serializer.data)
     elif request.method == 'POST':
@@ -19,17 +22,17 @@ def supers_list(request):
         serializer.save()
         return Response(serializer.data,status=status.HTTP_201_CREATED)
 
-@api_view(['GET', 'PUT'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def supers_detail(request, pk):
-    product = get_object_or_404(Supers, pk=pk)
+    supers = get_object_or_404(Supers, pk=pk)
     if request.method == 'GET':
-        serializer = SupersSerializer(product)
+        serializer = SupersSerializer(supers)
         return Response(serializer.data)
     elif request.method == 'PUT':
-        serializer = SupersSerializer(product, data=request.data)
+        serializer = SupersSerializer(supers, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
     elif request.method == 'DELETE':
-        product.delete()
+        supers.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
